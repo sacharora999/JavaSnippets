@@ -1,0 +1,50 @@
+package org.example;
+
+class Main{
+    public static void main(String[] args) throws InterruptedException {
+        Worker1.t = Thread.currentThread();
+        Thread t1 = new Thread(new Worker1());
+        t1.start();
+//        Thread t2 = new Thread(new Worker2());
+//        t2.start();
+
+
+        t1.join();
+//        t2.join();
+
+
+
+        System.out.println("Building Main Block");
+    }
+}
+
+//Worker Thread with Same Priority as Manin Thread will give the chance to Main Thread to execute first
+
+class Worker1 implements Runnable{
+
+    static Thread t;
+
+    @Override
+    public void run() {
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        System.out.println("Building Sub Block 1");
+
+
+
+    }
+}
+
+
+class Worker2 implements Runnable{
+
+    @Override
+    public void run() {
+        System.out.println("Building Sub Block 2");
+
+
+    }
+}
