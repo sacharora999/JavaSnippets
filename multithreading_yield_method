@@ -1,0 +1,24 @@
+package org.example;
+
+class Main{
+    public static void main(String[] args) {
+        Thread t = new Thread(new Worker());
+        t.start();
+        for(int i = 0; i < 10;i++){
+            System.out.println("Main Thread");
+        }
+    }
+}
+
+//Worker Thread with Same Priority as Manin Thread will give the chance to Main Thread to execute first
+
+class Worker implements Runnable{
+
+    @Override
+    public void run() {
+        for(int i = 0; i < 10;i++){
+            System.out.println("Worker Thread");
+            Thread.yield();
+        }
+    }
+}
