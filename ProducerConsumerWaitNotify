@@ -1,0 +1,74 @@
+package org.example;
+
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+class Main {
+    public static void main(String[] args) throws InterruptedException {
+        Queue<Integer> q = new LinkedList<>();
+        Producer p = new Producer(q);
+        Consumer c = new Consumer(q);
+
+        p.start();
+        c.start();
+    }
+}
+
+class Producer extends Thread{
+    Queue<Integer> q;
+    public Producer(Queue<Integer> q){
+        this.q = q;
+    }
+    public void run(){
+        while (true){
+            synchronized (q) {
+                while (q.size() == 3) {
+                    try {
+                        System.out.println("Queue is full..Waiting for consumer to  consume...");
+                        q.wait();
+
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+
+                Random r = new Random();
+                int i = r.nextInt();
+                q.add(i);
+                System.out.println("Item Produced");
+                q.notify();
+            }
+
+        }
+    }
+}
+
+
+class Consumer extends Thread{
+    Queue<Integer> q;
+    public Consumer(Queue<Integer> q){
+        this.q = q;
+    }
+    public void run(){
+        while (true){
+            synchronized (q) {
+                while (q.isEmpty()) {
+                    try {
+                        System.out.println("Queue is empty..Waiting for producer to produce...");
+                        q.wait();
+
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+
+                System.out.println("Item Consumed : " + q.remove());
+                q.notify();
+            }
+
+        }
+    }
+}
