@@ -1,0 +1,54 @@
+class Main{
+
+    Resource resource1 = new Resource();
+    Resource resource2 = new Resource();
+    public void Method1(){
+        synchronized (resource1){
+            System.out.println(Thread.currentThread().getName()  + " Acquired Lock on Resource 1");
+            synchronized (resource2){
+                System.out.println(Thread.currentThread().getName() + " Acquired Lock on Resource 2");
+            }
+        }
+    }
+
+    public void Method2(){
+        synchronized (resource2){
+            System.out.println(Thread.currentThread().getName() + " Acquired Lock on Resource 2");
+            synchronized (resource1){
+                System.out.println(Thread.currentThread().getName()  + " Acquired Lock on Resource 1");
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        Main main = new Main();
+        MyThread1 t1 = new MyThread1(main);
+        MyThread2 t2 = new MyThread2(main);
+        t1.start();
+        t2.start();
+
+
+    }
+}
+
+class Resource{}
+
+class MyThread1 extends Thread{
+    Main main;
+    public MyThread1(Main main){
+        this.main = main;
+    }
+    public void run(){
+        main.Method1();
+    }
+}
+
+class MyThread2 extends Thread{
+    Main main;
+    public MyThread2(Main main){
+        this.main = main;
+    }
+    public void run(){
+        main.Method2();
+    }
+}
